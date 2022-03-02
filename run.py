@@ -36,6 +36,11 @@ def validate_data(values):
     Raises ValueError if strings cannot be converted into int,
     or if there aren't exactly  values.
     """
+    [int(value) for value in values]
+    """
+    list comprehension: for each individual value in the 
+    values  list, convert that value into an integer
+    """
     try:
         if len(values) != 6:
             raise ValueError(
@@ -43,4 +48,6 @@ def validate_data(values):
             )
     except ValueError as e:
         print(f'Invalid data: {e}, please try again.\n')
+
+
 get_sales_data()
