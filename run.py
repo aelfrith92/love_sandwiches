@@ -13,7 +13,7 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 
 SHEET = GSPREAD_CLIENT.open('love_sandwiches')
-#line above select and opens the spreadsheet
+# line above select and opens the spreadsheet
 
 
 def get_sales_data():
@@ -33,7 +33,7 @@ def get_sales_data():
 
         if validate_data(sales_data):
             # This check only validates data. Conversions of data inside,
-            # although useful, are not returned. So, math must be done 
+            # although useful, are not returned. So, math must be done
             # with newly converted data.
             print('Data is valid!')
             break
@@ -84,9 +84,17 @@ def calculate_surplus_data(sales_row):
     print('Calculating surplus data...\n')
     stock = SHEET.worksheet('stock').get_all_values()
     # line above gets access to the worksheet named 'stock' inside the workbook
-    # and acquires all values.
+    # and acquires all values in the form of a list of lists
     stock_row = stock[-1]
-    print(f'\n Last row in stock sheet is: \n {stock_row}')
+    # line above gets the last list of values in the stock sheet
+
+    surplus_data = [(int(stock) - sales)
+        for stock, sales in zip(stock_row, sales_row)]
+    # line above calculates surplus for each heading/item,
+    # by using a list comprehension. The zip method allows to iterate 2 lists
+    # at the same time
+    print(f'Surplus data list is:\n{surplus_data}')
+
 
 def main():
     """
@@ -96,6 +104,7 @@ def main():
     sales_data = [int(num) for num in data]
     update_sales_worksheet(sales_data)
     calculate_surplus_data(sales_data)
+
 
 print('Welcome to Love Sandwiches Data Automation')
 main()
