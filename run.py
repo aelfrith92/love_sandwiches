@@ -1,6 +1,6 @@
 import gspread
 from google.oauth2.service_account import Credentials
-# from pprint import pprint
+from pprint import pprint
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -94,7 +94,37 @@ def calculate_surplus_data(sales_row):
     # line above calculates surplus for each heading/item,
     # by using a list comprehension. The zip method allows us to iterate 2
     # lists at the same time. The second line is indented to the opening
-    # parentheses
+    # parentheses. Alternative version:
+    # 
+    # surplus_data = []
+    # for stock, sales in zip(stock_row, sales_row):
+    #    surplus = int(stock) - sales
+    #    surplus_data.append(surplus)
+    #
+    # return surplus_data
+
+
+def get_last_5_entries_sales():
+    """
+    Collects columns of data from sales worksheet, collecting
+    the last 5 entries for each sandwich and returns the data
+    as a list of lists
+    """
+
+    sales = SHEET.worksheet('sales')
+    # column = sales.col_values(3)
+    # The line commented-out above gets access to the values
+    # of a specific column.
+
+    columns = [sales.col_values(ind)[-5:] for ind in range(1, 7)]
+    # The line above set a list comprehension which creates a list of lists:
+    # it assigns the last 5 values within the list resulting from
+    # sales.col_values(ind), which prints each column values. To select only
+    # the last 5 values, we added a slicer [-5:] which stands for
+    # "start at index -5 from the right and arrive to the end of the list"
+    # the for loop - instead - selects only positive integers for the index
+    # which recalls column 1, 2, 3, 4, 5, 6.
+    return columns
 
 
 def main():
@@ -109,4 +139,5 @@ def main():
 
 
 print('Welcome to Love Sandwiches Data Automation')
-main()
+# main()
+get_last_5_entries_sales()
