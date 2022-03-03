@@ -1,6 +1,6 @@
 import gspread
 from google.oauth2.service_account import Credentials
-from pprint import pprint 
+# from pprint import pprint
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -37,6 +37,7 @@ def get_sales_data():
             # with newly converted data.
             print('Data is valid!')
             break
+            # The break ends the while when the user enters valid data
     return sales_data
 
 
@@ -46,10 +47,10 @@ def validate_data(values):
     Raises ValueError if strings cannot be converted into int,
     or if there aren't exactly  values.
     """
-    [int(value) for value in values]
-    # list comprehension: for each individual value in the
-    # values  list, convert that value into an integer
     try:
+        [int(value) for value in values]
+        # list comprehension: for each individual value in the
+        # values  list, convert that value into an integer
         if len(values) != 6:
             raise ValueError(
                 f'Exactly 6 values required, you provided {len(values)}'
@@ -73,6 +74,20 @@ def update_sales_worksheet(data):
     print('Sales worksheet updated successfully.\n')
 
 
+def update_surplus_worksheet(data):
+    """
+    Update surplus worksheet, add new row with the list data provided.
+    """
+    print("Updating the surplus worksheet... with the following list:\n"
+          f"{data}")
+    surplus_worksheet = SHEET.worksheet('surplus')
+    # line above gets access to the worksheet named 'surplus' inside the
+    # workbook
+    surplus_worksheet.append_row(data)
+    # line above adds a new row in the selected worksheet with data passed in
+    print('Surplus worksheet updated successfully.\n')
+
+
 def calculate_surplus_data(sales_row):
     """
     Compare sales with stock and calculate the surplus for each item type
@@ -88,12 +103,12 @@ def calculate_surplus_data(sales_row):
     stock_row = stock[-1]
     # line above gets the last list of values in the stock sheet
 
-    surplus_data = [(int(stock) - sales)
-        for stock, sales in zip(stock_row, sales_row)]
+    return [(int(stock) - sales)
+            for stock, sales in zip(stock_row, sales_row)]
     # line above calculates surplus for each heading/item,
-    # by using a list comprehension. The zip method allows to iterate 2 lists
-    # at the same time
-    print(f'Surplus data list is:\n{surplus_data}')
+    # by using a list comprehension. The zip method allows us to iterate 2
+    # lists at the same time. The second line is indented to the opening
+    # parentheses
 
 
 def main():
@@ -103,7 +118,8 @@ def main():
     data = get_sales_data()
     sales_data = [int(num) for num in data]
     update_sales_worksheet(sales_data)
-    calculate_surplus_data(sales_data)
+    new_surplus_data = calculate_surplus_data(sales_data)
+    update_surplus_worksheet(new_surplus_data)
 
 
 print('Welcome to Love Sandwiches Data Automation')
